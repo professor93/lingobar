@@ -1,0 +1,74 @@
+name: Release
+
+# Release by pushing a tag: `git tag v0.1.0 && git push origin v0.1.0`.
+# The app version is written FROM the tag at build time (see "Set app version
+# from tag" below), so you never bump versions in the repo — the tag is the
+# single source of truth. Or run manually from the Actions tab (uses the
+# committed default version).
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        # Ship a small Apple-Silicon-only DMG and a universal (Intel + Apple
+        # Silicon) DMG, both attached to the same release.
+        target: [aarch64-apple-darwin, universal-apple-darwin]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+
+      - name: Setup Rust (both arches so the universal build can link)
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          workspaces: "src-tauri -> target"
+          key: ${{ matrix.target }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The tag (e.g. v0.1.0) is the source of truth for the version. Write it
+      # into tauri.conf.json so the bundle reports the tagged version.
+      - name: Set app version from tag
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Releasing version $VERSION"
+          jq --arg v "$VERSION" '.version = $v' src-tauri/tauri.conf.json > tc.json && mv tc.json src-tauri/tauri.conf.json
+          echo "tauri.conf.json version -> $(jq -r .version src-tauri/tauri.conf.json)"
+
+      - name: Build and publish (${{ matrix.target }})
+        uses: tauri-apps/tauri-action@84b9d35b5fc46c1e45415bdb6144030364f7ebc5 # v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Apple notarization is intentionally NOT wired up (no Apple Developer
+          # account): the app ships ad-hoc-signed, so users right-click → Open on
+          # first launch. To enable notarization later, add the APPLE_* secrets
+          # and reference them here — but never reference secrets while unset,
+          # since empty values make tauri-action attempt (and fail) a keychain
+          # import.
+        with:
+          args: --target ${{ matrix.target }}
+          tagName: ${{ github.ref_name }}
+          releaseName: "LingoBar ${{ github.ref_name }}"
+          releaseBody: "Download the DMG for your Mac — Apple Silicon (aarch64) or universal (Intel + Apple Silicon). The app is not notarized (no Apple Developer account), so on first launch macOS may say it is \"damaged\" or cannot be verified. It is fine — that is Gatekeeper blocking an unsigned download. To allow it, run once in Terminal: xattr -cr /Applications/LingoBar.app  — then open it. (Or: System Settings → Privacy & Security → Open Anyway.)"
+          # Pushing a tag publishes the release directly (no draft step).
+          releaseDraft: false
+          prerelease: false

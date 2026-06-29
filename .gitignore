@@ -1,0 +1,14 @@
+.idea
+dist
+node_modules
+src-tauri/target
+src-tauri/gen/schemas
+.DS_Store
+*.iml
+
+# Updater signing keys (NEVER commit the private key)
+src-tauri/.tauri-updater.key
+src-tauri/.tauri-updater.key.pub
+
+# Production release output (npm run release)
+/release/

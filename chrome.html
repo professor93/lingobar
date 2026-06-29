@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>chrome</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+      }
+      body {
+        font: 12px -apple-system, system-ui, sans-serif;
+        background: #e8e8e8;
+        color: #2c2c2c;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor: default;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #2a2a2c;
+          color: #e6e6e6;
+        }
+      }
+      .bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 100%;
+        padding: 0 8px;
+      }
+      .controls {
+        display: flex;
+        gap: 6px;
+        flex: 0 0 auto;
+      }
+      .ctl {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: none;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(0, 0, 0, 0.6);
+      }
+      .ctl svg {
+        width: 8px;
+        height: 8px;
+        opacity: 0;
+        transition: opacity 0.1s;
+      }
+      /* macOS-style: hovering the cluster reveals each button's glyph. */
+      .controls:hover .ctl svg {
+        opacity: 1;
+      }
+      .ctl.close {
+        background: #ff5f57;
+      }
+      .ctl.pin {
+        background: #febc2e;
+      }
+      .ctl.neww {
+        background: #28c840;
+      }
+      body.pinned .ctl.pin {
+        box-shadow: 0 0 0 2.5px rgba(254, 188, 46, 0.45);
+      }
+      body.pinned .ctl.close {
+        opacity: 0.35;
+        pointer-events: none;
+      }
+      .tabs {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        flex: 1 1 auto;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+      }
+      .tabs::-webkit-scrollbar {
+        display: none;
+      }
+      .tab {
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        height: 24px;
+        padding: 3px 6px 3px 8px;
+        border-radius: 4px;
+        max-width: 150px;
+        flex: 0 0 auto;
+        color: inherit;
+      }
+      .tab:not(.active) {
+        background: rgba(0, 0, 0, 0.04);
+      }
+      .tab:not(.active):hover {
+        background: rgba(0, 0, 0, 0.09);
+      }
+      /* Active tab: a white pill, vertically centered in the strip (not stuck to
+         the bottom, not blended). White makes it stand out. */
+      .tab.active {
+        background: #fff;
+        color: #1b1b1b;
+        font-weight: 500;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      @media (prefers-color-scheme: dark) {
+        .tab:not(.active) {
+          background: rgba(255, 255, 255, 0.05);
+        }
+        .tab:not(.active):hover {
+          background: rgba(255, 255, 255, 0.12);
+        }
+        .tab.active {
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        }
+      }
+      .tab-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .tab-edit {
+        font: inherit;
+        border: none;
+        outline: none;
+        width: 92px;
+        color: inherit;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        padding: 1px 4px;
+      }
+      @media (prefers-color-scheme: dark) {
+        .tab-edit {
+          background: rgba(255, 255, 255, 0.16);
+        }
+      }
+      .tab-close {
+        border: none;
+        background: transparent;
+        color: inherit;
+        opacity: 0;
+        font-size: 14px;
+        line-height: 1;
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+      }
+      .tab:hover .tab-close,
+      .tab.active .tab-close {
+        opacity: 0.5;
+      }
+      .tab-close:hover {
+        opacity: 1;
+        background: rgba(0, 0, 0, 0.12);
+      }
+      .plus {
+        flex: 0 0 auto;
+        border: none;
+        background: transparent;
+        color: inherit;
+        font-size: 16px;
+        line-height: 1;
+        width: 22px;
+        height: 22px;
+        border-radius: 6px;
+        opacity: 0.7;
+      }
+      .plus:hover {
+        background: rgba(0, 0, 0, 0.06);
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Control dots: hovering the cluster reveals each one's function glyph. -->
+    <div class="bar" data-tauri-drag-region>
+      <div class="controls">
+        <button class="ctl close" title="Close">
+          <svg viewBox="0 0 10 10"><path d="M2.4 2.4 7.6 7.6 M7.6 2.4 2.4 7.6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+        </button>
+        <button class="ctl pin" title="Pin">
+          <svg viewBox="0 0 12 12"><path d="M6 1.4c-1.9 0-3.4 1.5-3.4 3.4 0 2.4 3.4 5.8 3.4 5.8s3.4-3.4 3.4-5.8C9.4 2.9 7.9 1.4 6 1.4zm0 4.6a1.2 1.2 0 110-2.4 1.2 1.2 0 010 2.4z" fill="currentColor"/></svg>
+        </button>
+        <button class="ctl neww" title="New window">
+          <svg viewBox="0 0 10 10"><path d="M5 2 5 8 M2 5 8 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" fill="none"/></svg>
+        </button>
+      </div>
+      <div class="tabs" id="tabs" data-tauri-drag-region></div>
+      <button class="plus" title="New tab">+</button>
+    </div>
+    <script type="module" src="/src/chrome.ts"></script>
+  </body>
+</html>

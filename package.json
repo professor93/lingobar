@@ -1,0 +1,21 @@
+{
+  "name": "lingobar",
+  "version": "0.1.0",
+  "description": "LingoBar — instant translations from your macOS menu bar, with tabs, pinning, and hotkeys.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "release": "bash scripts/release.sh"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2.11.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.11.0",
+    "vite": "^8.0.0",
+    "typescript": "^6.0.0"
+  }
+}

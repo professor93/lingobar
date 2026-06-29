@@ -1,0 +1,63 @@
+[package]
+name = "lingobar"
+version = "0.1.0"
+description = "LingoBar — instant translations from your macOS menu bar, with tabs, pinning, and hotkeys."
+authors = ["LingoBar"]
+edition = "2021"
+
+[lib]
+name = "lingobar_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon", "image-png", "macos-private-api", "unstable"] }
+tauri-plugin-positioner = { version = "2", features = ["tray-icon"] }
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-autostart = "2"
+tauri-plugin-store = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# Modern Objective-C interop.
+objc2 = "0.6"
+objc2-foundation = "0.3"
+objc2-app-kit = { version = "0.3", features = [
+    "NSResponder",
+    "NSWindow",
+    "NSView",
+    "NSViewController",
+    "NSControl",
+    "NSButton",
+    "NSButtonCell",
+    "NSCell",
+    "NSColor",
+    "NSEvent",
+    "NSImage",
+    "NSImageView",
+    "NSTextField",
+    "NSText",
+    "NSTitlebarAccessoryViewController",
+    "NSApplication",
+    "NSAlert",
+    "NSPasteboard",
+    "NSPanel",
+    "NSWindowTabGroup",
+    "NSLayoutConstraint",
+    "NSGraphics",
+    "block2",
+    "objc2-core-foundation",
+] }
+block2 = "0.6"
+signal-hook = "0.4"
+
+# Size-optimized release build — LingoBar must be tiny and run on old Macs.
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

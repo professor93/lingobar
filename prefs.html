@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LingoBar Preferences</title>
+    <style>
+      :root { color-scheme: light dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 13px -apple-system, system-ui, sans-serif;
+        background: #fff;
+        color: #1d1d1f;
+        padding: 18px 22px 22px;
+      }
+      @media (prefers-color-scheme: dark) {
+        body { background: #2a2a2c; color: #f2f2f2; }
+        .row { border-color: #444 !important; }
+        .rec { background: #3a3a3c; border-color: #555; color: #f2f2f2; }
+        .key { background: #343436; border-color: #4a4a4c; }
+      }
+      h1 { font-size: 16px; margin: 0 0 12px; }
+      h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; opacity: .55; margin: 16px 0 4px; }
+      .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #ececec; }
+      .row:last-child { border-bottom: 0; }
+      .row label, .row .name { flex: 1; }
+      .rec { min-width: 132px; text-align: center; padding: 5px 10px; border: 1px solid #ccc; border-radius: 6px; background: #f5f5f7; cursor: pointer; font-variant: tabular-nums; }
+      .rec.recording { border-color: #0a84ff; color: #0a84ff; }
+      .key { min-width: 132px; text-align: center; padding: 5px 10px; border: 1px solid #e3e3e6; border-radius: 6px; background: #fafafa; font-variant: tabular-nums; opacity: .8; }
+      .hint { font-size: 11px; opacity: .55; margin-top: 4px; }
+      input[type="checkbox"] { width: 16px; height: 16px; }
+      select { font: inherit; padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc; background: #fff; color: inherit; min-width: 132px; }
+      .btn { font: inherit; padding: 5px 12px; border-radius: 6px; border: 1px solid #ccc; background: #f5f5f7; color: inherit; cursor: pointer; }
+      .hidden { display: none; }
+      .slider { display: flex; align-items: center; gap: 10px; min-width: 132px; justify-content: flex-end; }
+      .slider input[type="range"] { -webkit-appearance: none; appearance: none; width: 110px; height: 18px; background: transparent; cursor: pointer; }
+      .slider input[type="range"]::-webkit-slider-runnable-track {
+        height: 4px; border-radius: 2px;
+        background: repeating-linear-gradient(to right, rgba(0,0,0,.28) 0 1px, transparent 1px var(--tick, 10%)), #d6d6da;
+      }
+      .slider input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #0a84ff; margin-top: -5px; }
+      .slider output { min-width: 36px; text-align: right; font-variant: tabular-nums; opacity: .75; }
+      @media (prefers-color-scheme: dark) {
+        select, .btn { background: #3a3a3c; border-color: #555; color: #f2f2f2; }
+        .slider input[type="range"]::-webkit-slider-runnable-track {
+          background: repeating-linear-gradient(to right, rgba(255,255,255,.3) 0 1px, transparent 1px var(--tick, 10%)), #4a4a4c;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>LingoBar Preferences</h1>
+
+    <h2>Global Shortcut</h2>
+    <div class="row">
+      <label>Toggle translator</label>
+      <span class="rec" id="rec-toggle" data-which="toggle">…</span>
+    </div>
+    <div class="hint" id="shortcut-hint">Click the shortcut and press a new key combination. Changes apply after restart.</div>
+
+    <h2>In-app Shortcuts</h2>
+    <div class="row"><span class="name">New tab</span><span class="key">⌘T</span></div>
+    <div class="row"><span class="name">New window</span><span class="key">⌘N</span></div>
+    <div class="row"><span class="name">Close tab</span><span class="key">⌘W</span></div>
+    <div class="row"><span class="name">Next / previous tab</span><span class="key">⌃Tab / ⌃⇧Tab</span></div>
+    <div class="row"><span class="name">Switch windows</span><span class="key">⌘`</span></div>
+    <div class="row"><span class="name">Jump to tab N / last</span><span class="key">⌘1–9 / ⌘0</span></div>
+    <div class="row"><span class="name">Copy translation</span><span class="key">⌘C</span></div>
+    <div class="row"><span class="name">Speak translation</span><span class="key">⌘⇧S</span></div>
+    <div class="row"><span class="name">Voice input (mic)</span><span class="key">⌘⇧M</span></div>
+    <div class="row"><span class="name">Hide all / current</span><span class="key">Esc / ⇧Esc</span></div>
+    <div class="row"><span class="name">Hide all (quit via menu)</span><span class="key">⌘Q</span></div>
+    <div class="row"><span class="name">Preferences</span><span class="key">⌘,</span></div>
+    <div class="hint">Work when a translator window is focused. Not rebindable.</div>
+
+    <h2>General</h2>
+    <div class="row">
+      <label for="session_restore">Restore session on launch</label>
+      <input type="checkbox" id="session_restore" data-pref="session_restore" />
+    </div>
+    <div class="row">
+      <label for="launch_at_login">Launch at login</label>
+      <input type="checkbox" id="launch_at_login" data-pref="launch_at_login" />
+    </div>
+    <div class="row">
+      <label for="sleep_idle_tabs">Sleep inactive tabs to save memory</label>
+      <input type="checkbox" id="sleep_idle_tabs" data-pref="sleep_idle_tabs" />
+    </div>
+    <div class="hint">
+      Tabs you haven't used recently unload to free memory and reload when you
+      return to them.
+    </div>
+
+    <h2>Appearance</h2>
+    <div class="row">
+      <label for="zoom">Zoom</label>
+      <div class="slider">
+        <input type="range" id="zoom" min="50" max="150" step="1" />
+        <output id="zoom-out">100%</output>
+      </div>
+    </div>
+    <div class="row">
+      <label for="opacity">Window opacity</label>
+      <div class="slider">
+        <input type="range" id="opacity" min="30" max="100" step="1" />
+        <output id="opacity-out">100%</output>
+      </div>
+    </div>
+    <div class="row">
+      <label for="win_w">Window width</label>
+      <div class="slider">
+        <input type="range" id="win_w" min="252" step="1" />
+        <output id="win_w-out">px</output>
+      </div>
+    </div>
+    <div class="row">
+      <label for="win_h">Window height</label>
+      <div class="slider">
+        <input type="range" id="win_h" min="155" step="1" />
+        <output id="win_h-out">px</output>
+      </div>
+    </div>
+    <div class="row">
+      <label>Window size</label>
+      <button id="reset_size" class="btn">Reset to default</button>
+    </div>
+
+    <h2>Default Languages</h2>
+    <div class="row">
+      <label for="lang_from">Translate from</label>
+      <select id="lang_from"></select>
+    </div>
+    <div class="row">
+      <label for="lang_to">Translate to</label>
+      <select id="lang_to"></select>
+    </div>
+    <div class="hint">Applies to new tabs and windows.</div>
+
+    <div id="logging-section" style="display: none">
+      <h2>Logging</h2>
+      <div class="row">
+        <label for="log_to_files">Log to files</label>
+        <input type="checkbox" id="log_to_files" data-pref="log_to_files" />
+      </div>
+      <div class="row">
+        <label>App files</label>
+        <button id="open_app_folder" class="btn">Open app folder</button>
+      </div>
+      <div class="hint">
+        Opens the folder with the app's settings, history, and (when enabled)
+        lingobar.log.
+      </div>
+      <div class="row">
+        <label>Live log</label>
+        <button id="tail_log" class="btn">Tail logs</button>
+      </div>
+      <div class="hint">
+        "Tail logs" opens a live viewer that shows events in real time — even
+        when "Log to files" is off. File logging (lingobar.log, capped at 5 MB)
+        only runs while "Log to files" is on.
+      </div>
+    </div>
+
+    <script type="module" src="/src/prefs.ts"></script>
+  </body>
+</html>

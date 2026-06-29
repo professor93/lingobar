@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About LingoBar</title>
+    <style>
+      :root { color-scheme: light dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font: 12px/1.55 -apple-system, system-ui, sans-serif;
+        background: #fff;
+        color: #1d1d1f;
+        padding: 18px 26px 20px;
+        text-align: center;
+      }
+      @media (prefers-color-scheme: dark) {
+        body { background: #2a2a2c; color: #f2f2f2; }
+        a { color: #4ea1ff; }
+      }
+      img.logo { width: 72px; height: 72px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+      h1 { font-size: 18px; margin: 10px 0 1px; }
+      .ver { font-size: 11px; opacity: .5; margin-bottom: 10px; }
+      p { margin: 7px 0; }
+      .muted { font-size: 11px; opacity: .62; }
+      .dev { margin-top: 13px; font-weight: 500; }
+      a { color: #0a84ff; text-decoration: none; cursor: pointer; }
+      a:hover { text-decoration: underline; }
+    </style>
+    <script type="module" src="/src/about.ts"></script>
+  </head>
+  <body>
+    <img class="logo" src="/logo.png" alt="LingoBar" />
+    <h1>LingoBar</h1>
+    <div class="ver" id="ver">v0.1.0</div>
+    <p>Instant translations from your menu bar.</p>
+    <p class="muted">
+      LingoBar uses no API, sends no requests, and parses nothing — it opens the
+      official Google Translate site in a webview, like a browser would, and hides
+      everything outside the translator.
+    </p>
+    <p class="muted">
+      Google Translate is a trademark of Google LLC. LingoBar is an independent,
+      unofficial client, not affiliated with or endorsed by Google.
+    </p>
+    <p class="dev">Developer · <a id="dev-link" href="https://github.com/professor93/lingobar">github.com/professor93</a></p>
+  </body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "identifier": "default",
+  "description": "Translator (win_*) windows and the remote translate.google.com webview. Minimal scope: only the core commands the chrome tab bar and the injected script invoke from JS (drag, resize-drag). Window destroy/close, global-shortcut, autostart and positioner are NOT here — those run Rust-side or via custom app commands (themselves guarded against remote callers by is_remote_tab), so remote pages never get them.",
+  "windows": ["win_*"],
+  "remote": {
+    "urls": ["https://translate.google.com"]
+  },
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-start-resize-dragging"
+  ]
+}
